@@ -1,0 +1,21 @@
+
+let StartTime = datetime(2026-08-30T00:00:00Z);
+let EndTime = datetime(2026-10-03T00:00:00Z);
+DeviceProcessEvents
+| where Timestamp between (StartTime .. EndTime)
+| where DeviceName startswith "corp-ra01-te123"
+| where FileName in~ ("powershell.exe", "pwsh.exe", "cmd.exe")
+    or ProcessCommandLine contains "pwncrypt"
+| where ProcessCommandLine contains "pwncrypt"
+    or ProcessCommandLine contains "ExecutionPolicy Bypass"
+    or ProcessCommandLine contains "Invoke-WebRequest"
+| project
+    Timestamp,
+    DeviceName,
+    AccountName,
+    FileName,
+    ProcessCommandLine,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine,
+    SHA1
+| order by Timestamp asc
