@@ -1,0 +1,17 @@
+
+let StartTime = datetime(2026-10-01T00:00:00Z);
+let EndTime = datetime(2026-10-02T00:00:00Z);
+let TargetVM = "corp-ra01-te123da";
+MySQLAudit_CL
+| where TimeGenerated between (StartTime .. EndTime)
+| extend Host = tostring(split(_ResourceId, "/")[-1])
+| where Host =~ TargetVM
+    or RawData contains TargetVM
+| where RawData contains "DROP DATABASE"
+    or RawData contains "RENAME TABLE"
+    or RawData contains "recover_your_data"
+    or RawData contains "PURGE BINARY LOGS"
+    or RawData contains "RESET MASTER"
+    or RawData contains "SHUTDOWN"
+| project TimeGenerated, Host, RawData
+| order by TimeGenerated asc
