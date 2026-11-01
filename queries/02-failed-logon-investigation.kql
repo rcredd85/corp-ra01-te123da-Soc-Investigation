@@ -1,0 +1,16 @@
+
+let StartTime = datetime(2026-09-30T00:00:00Z);
+let EndTime = datetime(2026-10-03T00:00:00Z);
+DeviceLogonEvents
+| where Timestamp between (StartTime .. EndTime)
+| where DeviceName =~ "CORP-RA01-TE123DA"
+| where ActionType == "LogonFailed"
+| where isnotempty(RemoteIP)
+| summarize
+    FailedAttempts = count(),
+    TargetedAccounts = dcount(AccountName),
+    Accounts = make_set(AccountName, 20),
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp)
+    by DeviceName, RemoteIP
+| order by FailedAttempts desc
