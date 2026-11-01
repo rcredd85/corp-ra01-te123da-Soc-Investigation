@@ -1,0 +1,117 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "name": "header",
+      "content": {
+        "json": "# \ud83c\udf0d Inbound Authentication Origins \u2014 CORP-RA01-TE123DA\n\nMaps public source IPs of Windows network and remote-interactive logons for this VM only. Bubble size reflects attempts; geography is approximate. Choose a time range that contains the event date. **This workbook does not query MySQL audit logs.**"
+      }
+    },
+    {
+      "type": 9,
+      "name": "parameters",
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "tr",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time range",
+            "type": 4,
+            "isRequired": true,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 2592000000
+                }
+              ]
+            }
+          }
+        ],
+        "style": "pills"
+      }
+    },
+    {
+      "type": 1,
+      "name": "text-logon",
+      "content": {
+        "json": "## VM-specific Windows authentication map\n\nTarget VM: `CORP-RA01-TE123DA`. The default window is 30 days. For the October 1, 2026 incident, use an appropriate historical time range or change the query to explicit UTC dates. Data must exist in the linked `LAW-Cyber-Range` workspace."
+      }
+    },
+    {
+      "type": 3,
+      "name": "map-logon",
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "DeviceLogonEvents\n| where Timestamp {TimeRange}\n| where DeviceName =~ \"CORP-RA01-TE123DA\"\n| where RemoteIPType == \"Public\" and isnotempty(RemoteIP)\n| where LogonType in (\"Network\", \"RemoteInteractive\")\n| extend geo = geo_info_from_ip_address(RemoteIP)\n| extend Latitude = toreal(geo.latitude), Longitude = toreal(geo.longitude), Country = tostring(geo.country), City = tostring(geo.city)\n| where isnotnull(Latitude) and isnotnull(Longitude)\n| summarize Attempts=count(), Successes=countif(ActionType == \"LogonSuccess\"), Failures=countif(ActionType == \"LogonFailed\"), TargetedDevices=dcount(DeviceName), Accounts=make_set(AccountName, 25) by RemoteIP, Country, City, Latitude, Longitude\n| extend MapLabel=strcat(RemoteIP, \" (\", Country, \") - \", tostring(Successes), \" success / \", tostring(Attempts), \" total\")\n| project Latitude, Longitude, MapLabel, Attempts, Successes, Failures, TargetedDevices, RemoteIP, Country, City, Accounts\n| order by Successes desc, Attempts desc",
+        "size": 0,
+        "title": "CORP-RA01-TE123DA - inbound authentication origins",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "map",
+        "crossComponentResources": [
+          "/subscriptions/3c95e63a-895a-4386-991e-edbbf57de5c8/resourceGroups/cyber-range-admin-soc/providers/Microsoft.OperationalInsights/workspaces/LAW-Cyber-Range"
+        ],
+        "mapSettings": {
+          "locInfo": "LatLong",
+          "latitude": "Latitude",
+          "longitude": "Longitude",
+          "sizeSettings": "Attempts",
+          "sizeAggregation": "Sum",
+          "labelSettings": "MapLabel",
+          "legendMetric": "Successes",
+          "legendAggregation": "Sum",
+          "legendColor": "Successes",
+          "itemColorSettings": {
+            "nodeColorField": "Attempts",
+            "colorAggregation": "Sum",
+            "type": "heatmap",
+            "heatmapPalette": "greenRed"
+          }
+        }
+      }
+    },
+    {
+      "type": 3,
+      "name": "grid-logon",
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "DeviceLogonEvents\n| where Timestamp {TimeRange}\n| where DeviceName =~ \"CORP-RA01-TE123DA\"\n| where RemoteIPType == \"Public\" and isnotempty(RemoteIP)\n| where LogonType in (\"Network\", \"RemoteInteractive\")\n| extend geo = geo_info_from_ip_address(RemoteIP)\n| summarize Attempts=count(), Successes=countif(ActionType == \"LogonSuccess\"), Failures=countif(ActionType == \"LogonFailed\"), Devices=dcount(DeviceName), Accounts=make_set(AccountName, 25) by RemoteIP, Country=tostring(geo.country), City=tostring(geo.city)\n| order by Successes desc, Attempts desc",
+        "size": 0,
+        "title": "CORP-RA01-TE123DA - source IP breakdown",
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "crossComponentResources": [
+          "/subscriptions/3c95e63a-895a-4386-991e-edbbf57de5c8/resourceGroups/cyber-range-admin-soc/providers/Microsoft.OperationalInsights/workspaces/LAW-Cyber-Range"
+        ]
+      }
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/3c95e63a-895a-4386-991e-edbbf57de5c8/resourceGroups/cyber-range-admin-soc/providers/Microsoft.OperationalInsights/workspaces/LAW-Cyber-Range"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
