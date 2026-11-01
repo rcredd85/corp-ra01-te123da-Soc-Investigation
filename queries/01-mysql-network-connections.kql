@@ -3,7 +3,7 @@ let StartTime = datetime(2026-09-30T00:00:00Z);
 let EndTime = datetime(2026-10-03T00:00:00Z);
 DeviceNetworkEvents
 | where Timestamp between (StartTime .. EndTime)
-| where DeviceName =~ "CORP-RA01-TE123DA"
+| where DeviceName =~ "CORP-RA01-TE123"
 | where LocalPort == 3306 or RemotePort == 3306
 | project
     Timestamp,
