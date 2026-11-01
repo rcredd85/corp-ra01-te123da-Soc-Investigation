@@ -1,0 +1,15 @@
+
+let StartTime = datetime(2026-10-01T00:00:00Z);
+let EndTime = datetime(2026-10-02T00:00:00Z);
+let TargetVM = "corp-ra01-te123da";
+MySQLIncidentAuth_CL
+| where TimeGenerated between (StartTime .. EndTime)
+| where DeviceName =~ TargetVM
+| summarize
+    TotalAttempts = count(),
+    FailedLogons = countif(ActionType == "LogonFailure"),
+    SuccessfulLogons = countif(ActionType == "LogonSuccess"),
+    FirstSeen = min(TimeGenerated),
+    LastSeen = max(TimeGenerated)
+    by IpAddress, Username
+| order by FailedLogons desc
