@@ -1,0 +1,15 @@
+
+let StartTime = datetime(2026-10-01T00:00:00Z);
+let EndTime = datetime(2026-10-03T00:00:00Z);
+let TargetVM = "corp-ra01-te123";
+DeviceLogonEvents
+| where Timestamp between (StartTime .. EndTime)
+| where DeviceName startswith TargetVM
+| summarize
+    TotalAttempts = count(),
+    FailedLogons = countif(ActionType == "LogonFailed"),
+    SuccessfulLogons = countif(ActionType == "LogonSuccess"),
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp)
+    by RemoteIP, AccountName
+| order by FailedLogons desc
