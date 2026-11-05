@@ -7,6 +7,8 @@ A cybersecurity portfolio project documenting an October 2026 investigation invo
 - [`reports/SOC-Incident-Response-Report.pdf`](reports/SOC-Incident-Response-Report.pdf) — incident response report and DFIR comparison, including evidence, IOC leads, timeline, ATT&CK assessment, and investigative limitations.
 - [`workbooks/authentication-origins.json`](workbooks/authentication-origins.json) — Azure Monitor / Microsoft Sentinel Workbook JSON targeting `CORP-RA01-TE123DA` in `DeviceLogonEvents`.
 
+- [Forensic Ransom Note Evidence](evidence/ransom-note/) — MySQL ransom note screenshots, extortion instructions, and cryptocurrency payment evidence.
+
 ## Import the Workbook
 
 1. Open **Microsoft Sentinel → Workbooks** or **Azure Monitor → Workbooks**.
