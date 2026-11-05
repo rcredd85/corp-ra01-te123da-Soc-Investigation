@@ -33,7 +33,7 @@ The following screenshots document ransom demands and extortion instructions obs
 
 ### Evidence 01 — MySQL Ransom Note
 
-![MySQL Workbench Ransom Note](c2e829ac-57e9-4b4e-ac94-13d534fdf6df.png)
+![MySQL Workbench Ransom Note](mysql-ransom-note.png)
 
 **Source:** MySQL Workbench
 
