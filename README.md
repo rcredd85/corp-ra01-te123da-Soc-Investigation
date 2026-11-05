@@ -1,7 +1,12 @@
 # CORP-RA01-TE123DA — SOC Incident Investigation
 
-A cybersecurity portfolio project documenting an October 2026 investigation involving MySQL audit activity, Microsoft Defender for Endpoint telemetry, and an Azure Workbook for geolocating inbound Windows authentication sources.
+This project documents a hands-on SOC investigation of a simulated MySQL ransomware and data-extortion incident in a Windows environment.
 
+Using Microsoft Defender for Endpoint, Microsoft Sentinel, Kusto Query Language (KQL), and MySQL audit evidence, I investigated suspicious authentication activity, endpoint behavior, and database operations.
+
+The investigation includes forensic screenshots of a Bitcoin ransom demand, documented indicators of compromise, an incident response report, and a Microsoft Sentinel authentication-analysis workbook.
+
+**Key Finding:** Evidence confirmed the presence of a ransom demand and threats of public data disclosure. Successful data exfiltration was not independently established from the available evidence.
 ## Contents
 
 - [`reports/SOC-Incident-Response-Report.pdf`](reports/SOC-Incident-Response-Report.pdf) — incident response report and DFIR comparison, including evidence, IOC leads, timeline, ATT&CK assessment, and investigative limitations.
